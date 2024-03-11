@@ -2,9 +2,22 @@ pipeline {
     agent any
 
     stages {
+        stage('Build Docker Image') {
+            steps {
+                script {
+                    dockerImage = docker.build('matrix-test:latest')
+                }
+            }
+        }
+        stage('Save results in out/') {
+            steps {
+                script {
+                    sh 'docker build --output out .'
+                }
+            }
+        }
         stage('Build & Deploy') {
             steps {
-                // Ваши шаги для сборки и развертывания
                 script {
                     echo 'Building and deploying...'
                 }
@@ -16,7 +29,6 @@ pipeline {
                 expression { currentBuild.resultIsBetterOrEqualTo('SUCCESS') }
             }
             steps {
-                // Ваши шаги для загрузки и тестирования
                 script {
                     echo 'Pulling and testing...'
                 }
