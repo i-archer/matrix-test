@@ -1,12 +1,20 @@
 pipeline {
     agent any
 
+    parameters {
+        choice(name: 'SELECTED_STAGE', choices: ['Build & Deploy', 'Pull & Test'], description: 'Select the stage to run')
+    }
+
     environment {
         S3_BUCKET = 'pavelnovikau-matrix'
     }
 
     stages {
         stage('Build & Deploy') {
+            when {
+                expression { params.SELECTED_STAGE == 'Build & Deploy' }
+            }
+
             steps {
                 script {
                     dockerImage = docker.build('pavelnovikau:latest')
@@ -29,10 +37,7 @@ pipeline {
 
         stage('Pull & Test') {
             when {
-                anyOf {
-                    expression { cron('* */15 * * *') }
-                    expression { manual('Manually triggered from Jenkins UI') }
-                }
+                expression { params.SELECTED_STAGE == 'Pull & Test' }
             }
 
             steps {
