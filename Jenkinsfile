@@ -1,6 +1,10 @@
 pipeline {
     agent any
 
+    environment {
+        S3_BUCKET = 'pavelnovikau-matrix'
+    }
+
     stages {
         stage('Build & Deploy') {
             steps {
@@ -8,12 +12,16 @@ pipeline {
                     dockerImage = docker.build('pavelnovikau:latest')
                     sh "docker build --output out ."
                 }
+            }
+
+            steps {
                 script {
                     withAWS(credentials: 'AWS_1', region: 'us-east-1') {
                         sh "aws s3 cp out/artifact.txt s3://${S3_BUCKET}/"
                     }
                 }
             }
+
             steps {
                 script {
                     withAWS(credentials: 'AWS_1', region: 'us-east-1') {
@@ -29,6 +37,7 @@ pipeline {
             when {
                 expression { currentBuild.resultIsBetterOrEqualTo('SUCCESS') }
             }
+            
             steps {
                 script {
                     echo 'Pulling and testing...'
