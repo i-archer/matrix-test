@@ -12,17 +12,11 @@ pipeline {
                     dockerImage = docker.build('pavelnovikau:latest')
                     sh "docker build --output out ."
                 }
-            }
-
-            steps {
                 script {
                     withAWS(credentials: 'AWS_1', region: 'us-east-1') {
                         sh "aws s3 cp out/artifact.txt s3://${S3_BUCKET}/"
                     }
                 }
-            }
-
-            steps {
                 script {
                     withAWS(credentials: 'AWS_1', region: 'us-east-1') {
                         sh "aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 161192472568.dkr.ecr.us-east-1.amazonaws.com"
