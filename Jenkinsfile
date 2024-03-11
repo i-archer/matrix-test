@@ -29,12 +29,24 @@ pipeline {
 
         stage('Pull & Test') {
             when {
-                expression { currentBuild.resultIsBetterOrEqualTo('SUCCESS') }
+                anyOf {
+                    expression { cron('H 0 * * *') }
+                    expression { manual('Manually triggered from Jenkins UI') }
+                }
             }
-            
+
             steps {
                 script {
-                    echo 'Pulling and testing...'
+                    withAWS(credentials: 'AWS_1', region: 'us-east-1') {
+                        sh "aws s3 cp s3://${S3_BUCKET}/artifact.txt ."
+                        def artifactContent = sh(script: 'cat artifact.txt', returnStdout: true).trim()
+
+                        if (artifactContent.isEmpty()) {
+                            error 'The downloaded artifact is empty.'
+                        } else {
+                            echo "Artifact content: ${artifactContent}"
+                        }
+                    }
                 }
             }
         }
