@@ -12,11 +12,10 @@ pipeline {
     stages {
         stage('Build & Deploy') {
             when {
-                expression { 
-                    def buildCauses = currentBuild.getBuildCauses()
-                    return (buildCauses.any { it._class == 'com.cloudbees.jenkins.GitHubPushCause' } &&
-                            !buildCauses.any { it._class == 'hudson.triggers.TimerTrigger$TimerTriggerCause' }) ||
-                            params.SELECTED_STAGE == 'Build & Deploy'
+                beforeAgent true
+                anyOf {
+                    triggeredBy 'GitHubPushCause'
+                    expression { params.SELECTED_STAGE == 'Build & Deploy' }
                 }
             }
 
@@ -42,12 +41,11 @@ pipeline {
 
         stage('Pull & Test') {
             when {
-                expression { 
-                    def buildCauses = currentBuild.getBuildCauses()
-                    return (buildCauses.any { it._class == 'hudson.triggers.TimerTrigger$TimerTriggerCause' } ||
-                            params.SELECTED_STAGE == 'Pull & Test')
+                beforeAgent true
+                anyOf {
+                    triggeredBy 'TimerTrigger'
+                    expression { params.SELECTED_STAGE == 'Pull & Test' }
                 }
-            }
 
             steps {
                 script {
