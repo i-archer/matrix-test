@@ -30,7 +30,7 @@ pipeline {
         stage('Pull & Test') {
             when {
                 anyOf {
-                    expression { cron('H 0 * * *') }
+                    expression { cron('* */15 * * *') }
                     expression { manual('Manually triggered from Jenkins UI') }
                 }
             }
