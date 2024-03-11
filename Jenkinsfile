@@ -4,26 +4,22 @@ pipeline {
     stages {
         stage('Build & Deploy') {
             steps {
-                // Clone repository and checkout PR branch
-                // Build Docker image
-                // Run Python script inside the container
-                // Deploy artifact to S3
-                // Push Docker image to ECR
+                // Ваши шаги для сборки и развертывания
+                script {
+                    echo 'Building and deploying...'
+                }
             }
         }
 
         stage('Pull & Test') {
             when {
-                anyOf {
-                    // Triggered periodically
-                    cron('H 0 * * *')
-                    // Triggered manually in Jenkins UI
-                    expression { currentBuild.resultIsBetterOrEqualTo('SUCCESS') }
-                }
+                expression { currentBuild.resultIsBetterOrEqualTo('SUCCESS') }
             }
             steps {
-                // Download the most recent artifact from S3
-                // Test whether the artifact is empty
+                // Ваши шаги для загрузки и тестирования
+                script {
+                    echo 'Pulling and testing...'
+                }
             }
         }
     }
