@@ -22,7 +22,8 @@ pipeline {
             steps {
                 script {
                     withCredentials([string(credentialsId: "${AWS_CREDENTIALS}", variable: 'AWS_CREDENTIALS')]) {
-                        sh "aws s3 cp artifact.txt s3://${S3_BUCKET}/"
+                        sh "ls -la"
+                        sh "aws s3 cp out/artifact.txt s3://${S3_BUCKET}/"
                     }
                 }
             }
