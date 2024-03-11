@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     parameters {
-        choice(name: 'SELECTED_STAGE', choices: ['Build & Deploy', 'Pull & Test'], description: 'Select the stage to run')
+        choice(name: 'SELECTED_STAGE', choices: ['Build & Deploy', 'Pull & Test', 'Both'], description: 'Select the stage to run')
     }
 
     environment {
@@ -12,7 +12,7 @@ pipeline {
     stages {
         stage('Build & Deploy') {
             when {
-                expression { params.SELECTED_STAGE == 'Build & Deploy' }
+                expression { params.SELECTED_STAGE == 'Build & Deploy' || params.SELECTED_STAGE == 'Both' }
             }
 
             steps {
@@ -37,7 +37,7 @@ pipeline {
 
         stage('Pull & Test') {
             when {
-                expression { params.SELECTED_STAGE == 'Pull & Test' }
+                expression { params.SELECTED_STAGE == 'Pull & Test' || params.SELECTED_STAGE == 'Both' }
             }
 
             steps {
