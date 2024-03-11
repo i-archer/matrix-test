@@ -16,3 +16,4 @@ def create_artifact():
 
 if __name__ == "__main__":
     create_artifact()
+    
