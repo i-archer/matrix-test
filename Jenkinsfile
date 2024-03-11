@@ -5,6 +5,9 @@ pipeline {
         stage('Build Docker Image') {
             steps {
                 script {
+                    sh 'aws s3 ls'
+                }
+                script {
                     dockerImage = docker.build('matrix-test:latest')
                 }
             }
