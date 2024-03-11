@@ -46,7 +46,7 @@ pipeline {
                     triggeredBy 'TimerTrigger'
                     expression { params.SELECTED_STAGE == 'Pull & Test' }
                 }
-
+            }
             steps {
                 script {
                     withAWS(credentials: 'AWS_1', region: 'us-east-1') {
