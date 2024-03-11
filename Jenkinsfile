@@ -17,6 +17,9 @@ pipeline {
                     // triggeredBy 'GitHubPushCause'
                     expression { params.SELECTED_STAGE == 'Build & Deploy' }
                 }
+                not {
+                    triggeredBy 'TimerTrigger'
+                }
             }
             steps {
                 script {
