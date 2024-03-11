@@ -13,6 +13,7 @@ pipeline {
                         sh "aws s3 cp out/artifact.txt s3://${S3_BUCKET}/"
                     }
                 }
+            }
             steps {
                 script {
                     withAWS(credentials: 'AWS_1', region: 'us-east-1') {
