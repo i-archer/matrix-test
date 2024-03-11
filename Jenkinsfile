@@ -2,20 +2,18 @@ pipeline {
     agent any
 
     parameters {
-        string(name: 'AWS_REGION', defaultValue: '', description: 'AWS Region')
-        string(name: 'S3_BUCKET', defaultValue: '', description: 'S3 Bucket Name')
-        string(name: 'ECR_REPO', defaultValue: '', description: 'ECR Repository Name')
-        string(name: 'AWS_CREDENTIALS', defaultValue: '', description: 'AWS Credentials ID')
+        string(name: 'AWS_REGION', defaultValue: 'us-east-1', description: 'AWS Region')
+        string(name: 'S3_BUCKET', defaultValue: 'pavelnovikau-matrix', description: 'S3 Bucket Name')
+        string(name: 'ECR_REPO', defaultValue: 'pavelnovikau', description: 'ECR Repository Name')
+        string(name: 'AWS_CREDENTIALS', defaultValue: 'AWS_SECRETS', description: 'AWS Credentials ID')
     }
 
     stages {
         stage('Build Docker Image') {
             steps {
                 script {
-                    withCredentials([string(credentialsId: "${AWS_CREDENTIALS}", variable: 'AWS_CREDENTIALS')]) {
-                        dockerImage = docker.build('matrix-test:latest')
-                        sh "docker build --output out ."
-                    }
+                    dockerImage = docker.build('matrix-test:latest')
+                    sh "docker build --output out ."
                 }
             }
         }
