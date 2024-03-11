@@ -15,7 +15,7 @@ parameters {
                     withCredentials([string(credentialsId: "${AWS_CREDENTIALS_ACCESS_KEY}", variable: 'AWS_ACCESS_KEY_ID'), string(credentialsId: "${AWS_CREDENTIALS_SECRET_KEY}", variable: 'AWS_SECRET_ACCESS_KEY')]) {
 
                        sh "aws s3 ls"
-                }
+                
             }
                 }
                 script {
