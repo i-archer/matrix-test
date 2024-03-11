@@ -14,11 +14,10 @@ pipeline {
             when {
                 beforeAgent true
                 anyOf {
-                    triggeredBy 'GitHubPushCause'
+#                    triggeredBy 'GitHubPushCause'
                     expression { params.SELECTED_STAGE == 'Build & Deploy' }
                 }
             }
-
             steps {
                 script {
                     dockerImage = docker.build('pavelnovikau:latest')
