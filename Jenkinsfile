@@ -37,7 +37,12 @@ pipeline {
 
         stage('Pull & Test') {
             when {
-                expression { params.SELECTED_STAGE == 'Pull & Test' || params.SELECTED_STAGE == 'Both' }
+                anyOf {
+                    expression { cron('H 0 * * *') }
+                    expression { manual('Manually triggered from Jenkins UI') }
+                    expression { params.SELECTED_STAGE == 'Pull & Test' || params.SELECTED_STAGE == 'Both' }
+                }
+            }
             }
 
             steps {
