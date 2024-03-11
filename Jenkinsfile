@@ -21,7 +21,7 @@ pipeline {
         stage('Deploy to S3') {
             steps {
                 script {
-                    withCredentials([string(credentialsId: "${AWS_CREDENTIALS}", variable: 'AWS_CREDENTIALS')]) {
+                    withAWS(credentials: 'AWS_1', region: 'us-east-1') {
                         sh "ls -la"
                         sh "aws s3 cp out/artifact.txt s3://${S3_BUCKET}/"
                     }
