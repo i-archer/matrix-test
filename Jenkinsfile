@@ -1,39 +1,31 @@
 pipeline {
     agent any
 
-parameters {
-    string(name: 'AWS_REGION', defaultValue: '', description: 'AWS Region')
-    string(name: 'S3_BUCKET', defaultValue: '', description: 'S3 Bucket Name')
-    string(name: 'ECR_REPO', defaultValue: '', description: 'ECR Repository Name')
-    string(name: 'AWS_CREDENTIALS', defaultValue: '', description: 'AWS Credentials ID')
-}
+    parameters {
+        string(name: 'AWS_REGION', defaultValue: '', description: 'AWS Region')
+        string(name: 'S3_BUCKET', defaultValue: '', description: 'S3 Bucket Name')
+        string(name: 'ECR_REPO', defaultValue: '', description: 'ECR Repository Name')
+        string(name: 'AWS_CREDENTIALS', defaultValue: '', description: 'AWS Credentials ID')
+    }
 
     stages {
         stage('Build Docker Image') {
             steps {
                 script {
-                    withCredentials([string(credentialsId: "${AWS_CREDENTIALS_ACCESS_KEY}", variable: 'AWS_ACCESS_KEY_ID'), string(credentialsId: "${AWS_CREDENTIALS_SECRET_KEY}", variable: 'AWS_SECRET_ACCESS_KEY')]) {
+                    withCredentials([string(credentialsId: "${AWS_CREDENTIALS}", variable: 'AWS_CREDENTIALS')]) {
+                        dockerImage = docker.build('matrix-test:latest')
+                        sh "docker build --output out ."
+                    }
+                }
+            }
+        }
 
-                       sh "aws s3 ls"
-                
-            }
-                }
-                script {
-                    dockerImage = docker.build('matrix-test:latest')
-                }
-            }
-        }
-        stage('Save results in out/') {
+        stage('Deploy to S3') {
             steps {
                 script {
-                    sh 'docker build --output out .'
-                }
-            }
-        }
-        stage('Build & Deploy') {
-            steps {
-                script {
-                    echo 'Building and deploying...'
+                    withCredentials([string(credentialsId: "${AWS_CREDENTIALS}", variable: 'AWS_CREDENTIALS')]) {
+                        sh "aws s3 cp artifact.txt s3://${S3_BUCKET}/"
+                    }
                 }
             }
         }
