@@ -14,9 +14,8 @@ pipeline {
             when {
                 expression { 
                     def buildCauses = currentBuild.getBuildCauses()
-                    return (buildCauses.any { it._class == 'com.cloudbees.jenkins.GitHubPushCause' } && 
-                            !buildCauses.any { it._class == 'hudson.triggers.TimerTrigger$TimerTriggerCause' }) ||
-                            params.SELECTED_STAGE == 'Build & Deploy'
+                    return (buildCauses.any { it.getShortDescription().contains("GitHub hook trigger") } ||
+                            params.SELECTED_STAGE == 'Build & Deploy')
                 }
             }
 
