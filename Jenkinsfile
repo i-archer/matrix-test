@@ -14,7 +14,7 @@ pipeline {
             when {
                 expression { 
                     def buildCauses = currentBuild.getBuildCauses()
-                    return buildCauses.any { it.getClass().getName() == 'com.cloudbees.jenkins.GitHubPushCause' } || params.SELECTED_STAGE == 'Build & Deploy'
+                    return buildCauses.any { it.getClass().getName() == 'com.cloudbees.jenkins.GitHubWebHookCause' } || params.SELECTED_STAGE == 'Build & Deploy'
                 }
             }
 
