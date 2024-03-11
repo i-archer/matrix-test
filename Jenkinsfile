@@ -14,8 +14,7 @@ pipeline {
             when {
                 expression { 
                     def buildCauses = currentBuild.getBuildCauses()
-                    return (buildCauses.any { it.getClass().getName() == 'com.cloudbees.jenkins.GitHubWebHookCause' } ||
-                            buildCauses.any { it.getClass().getName() == 'com.cloudbees.jenkins.GitHubPushCause' } ||
+                    return (buildCauses.any { it._class == 'com.cloudbees.jenkins.GitHubPushCause' } ||
                             params.SELECTED_STAGE == 'Build & Deploy')
                 }
             }
@@ -44,9 +43,8 @@ pipeline {
             when {
                 expression { 
                     def buildCauses = currentBuild.getBuildCauses()
-                    return (buildCauses.any { it.getClass().getName() == 'hudson.triggers.TimerTrigger$TimerTriggerCause' } ||
-                            buildCauses.any { it.getClass().getName() == 'hudson.model.Cause$UserIdCause' }) &&
-                            params.SELECTED_STAGE == 'Pull & Test'
+                    return (buildCauses.any { it._class == 'hudson.triggers.TimerTrigger$TimerTriggerCause' } ||
+                            params.SELECTED_STAGE == 'Pull & Test')
                 }
             }
 
