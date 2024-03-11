@@ -1,11 +1,21 @@
 pipeline {
     agent any
 
+    environment {
+        AWS_REGION = 'us-east-1'
+        S3_BUCKET = 'pavelnovikau-matrix'
+        ECR_REPO = 'pavelnovikau'
+    }
+
     stages {
         stage('Build Docker Image') {
             steps {
                 script {
-                    sh 'aws s3 ls'
+                   withCredentials([string(credentialsId: 'AWS_CREDENTIALS', variable: 'AWS_CREDENTIALS')]) {
+                        withAWS(region: "${AWS_REGION}", credentials: 'AWS_CREDENTIALS') {
+                            sh "aws s3 ls"
+                        }
+                    }
                 }
                 script {
                     dockerImage = docker.build('matrix-test:latest')
