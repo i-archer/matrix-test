@@ -1,29 +1,28 @@
 pipeline {
     agent any
 
-    parameters {
-        string(name: 'AWS_REGION', defaultValue: 'us-east-1', description: 'AWS Region')
-        string(name: 'S3_BUCKET', defaultValue: 'pavelnovikau-matrix', description: 'S3 Bucket Name')
-        string(name: 'ECR_REPO', defaultValue: 'pavelnovikau', description: 'ECR Repository Name')
-        string(name: 'AWS_CREDENTIALS', defaultValue: 'AWS_SECRETS', description: 'AWS Credentials ID')
-    }
-
     stages {
-        stage('Build Docker Image') {
+        stage('Build & Deploy') {
             steps {
                 script {
-                    dockerImage = docker.build('matrix-test:latest')
+                    dockerImage = docker.build('pavelnovikau:latest')
                     sh "docker build --output out ."
                 }
             }
-        }
-
-        stage('Deploy to S3') {
+        
             steps {
                 script {
                     withAWS(credentials: 'AWS_1', region: 'us-east-1') {
-                        sh "ls -la"
                         sh "aws s3 cp out/artifact.txt s3://${S3_BUCKET}/"
+                    }
+                }
+            }
+            steps {
+                script {
+                    withAWS(credentials: 'AWS_1', region: 'us-east-1') {
+                        sh "aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 161192472568.dkr.ecr.us-east-1.amazonaws.com"
+                        sh "docker tag pavelnovikau:latest 161192472568.dkr.ecr.us-east-1.amazonaws.com/pavelnovikau:latest"
+                        sh "docker push 161192472568.dkr.ecr.us-east-1.amazonaws.com/pavelnovikau:latest"
                     }
                 }
             }
