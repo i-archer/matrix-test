@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     parameters {
-        choice(name: 'SELECTED_STAGE', choices: ['Build & Deploy', 'Pull & Test', 'Both'], description: 'Select the stage to run')
+        choice(name: 'SELECTED_STAGE', choices: ['Build & Deploy', 'Pull & Test' ], description: 'Select the stage to run')
     }
 
     environment {
@@ -12,7 +12,10 @@ pipeline {
     stages {
         stage('Build & Deploy') {
             when {
-                expression { params.SELECTED_STAGE == 'Build & Deploy' || params.SELECTED_STAGE == 'Both' }
+                expression { 
+                    def buildCauses = currentBuild.getBuildCauses()
+                    return buildCauses.any { it.getClass().getName() == 'com.cloudbees.jenkins.GitHubPushCause' } || params.SELECTED_STAGE == 'Build & Deploy'
+                }
             }
 
             steps {
@@ -37,12 +40,10 @@ pipeline {
 
         stage('Pull & Test') {
             when {
-                anyOf {
-                    expression { cron('H 0 * * *') }
-                    expression { manual('Manually triggered from Jenkins UI') }
-                    expression { params.SELECTED_STAGE == 'Pull & Test' || params.SELECTED_STAGE == 'Both' }
+                expression { 
+                    def buildCauses = currentBuild.getBuildCauses()
+                    return buildCauses.any { it.getClass().getName() == 'hudson.model.Cause$UserIdCause' } || params.SELECTED_STAGE == 'Pull & Test'
                 }
-            }
             }
 
             steps {
