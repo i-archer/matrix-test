@@ -23,6 +23,7 @@ pipeline {
             }
             steps {
                 script {
+                    echo "${currentBuild.buildCauses}"
                     dockerImage = docker.build('pavelnovikau:latest')
                     sh "docker build --output out ."
                 }
@@ -47,6 +48,9 @@ pipeline {
                 anyOf {
                     triggeredBy 'TimerTrigger'
                     expression { params.SELECTED_STAGE == 'Pull & Test' }
+                }
+                not {
+                    triggeredBy 'GitHubPushCause'
                 }
             }
             steps {
