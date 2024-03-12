@@ -13,10 +13,10 @@ pipeline {
         stage('Build & Deploy') {
             when {
                 beforeAgent true
-                // anyOf {
-                //     triggeredBy 'GitHubPushCause'
-                //     expression { params.SELECTED_STAGE == 'Build & Deploy' }
-                // }
+                anyOf {
+                    triggeredBy 'GitHubPushCause'
+                    expression { params.SELECTED_STAGE == 'Build & Deploy' }
+                }
                 not {
                     triggeredBy 'TimerTrigger'
                 }
